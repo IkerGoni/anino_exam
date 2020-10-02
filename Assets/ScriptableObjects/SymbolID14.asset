@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3e7c144456c6c14aa23607d9bd349a2, type: 3}
+  m_Name: SymbolID14
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnManagerScriptableObject
+  Id: 14
+  Name: O
+  Image: {fileID: 5785051122073723084, guid: 8e5b35d4b76a75243ba64f08dcf74de1, type: 3}
+  Payout: 000000000000000001000000050000000a000000

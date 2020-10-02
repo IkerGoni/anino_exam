@@ -1,0 +1,13 @@
+Initial setup 40 mins
+Reels spinning 30 mins
+Send result to reels 30 mins
+
+trying to make the reels show result stopping on site 1h
+30 mins reels stop on result positon animated
+paylines creation 20 mins
+
+process paylines, create logic 30 mins
+
+generate random results on local, fix small bugs, review result logic 1h
+
+start settting UI and UI manager 40m
