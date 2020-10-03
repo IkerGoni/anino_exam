@@ -25,7 +25,7 @@ public class Symbol : MonoBehaviour
     public void Setup(SymbolData symbolData)
     {
         _symbolData = symbolData;
-        _symbolImage.sprite = Resources.Load<Sprite>("Sprites/"+symbolData.Image);
+        _symbolImage.sprite = DataManager.Instance.NameToSpriteData[symbolData.Image] ; //Resources.Load<Sprite>("Sprites/"+symbolData.Image);//
     }
     
     public void SetResultInfo(float posY, SymbolData resultSymbol)

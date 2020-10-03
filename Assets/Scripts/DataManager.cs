@@ -31,6 +31,10 @@ public class DataManager : Singleton<DataManager>
     public Dictionary<string, SymbolData> NameToSymbolData => nameToSymbolData;
 
     private Dictionary<int, SymbolData> idToSymbolData = new Dictionary<int, SymbolData>();
+    
+    private Dictionary<string, Sprite> nameToSpriteData = new Dictionary<string, Sprite>();
+    public Dictionary<string, Sprite> NameToSpriteData => nameToSpriteData;
+
 
     public Dictionary<int, SymbolData> IdToSymbolData => idToSymbolData;
 
@@ -84,10 +88,18 @@ public class DataManager : Singleton<DataManager>
 
     private void BuildLookupDictionaries()
     {
+        Sprite[] allSprites = Resources.LoadAll<Sprite>("Sprites/symbols");
+
         for (int i = 0; i < _allSymbols.Length; i++)
         {
             nameToSymbolData.Add(_allSymbols[i].Name, _allSymbols[i]);
             idToSymbolData.Add(_allSymbols[i].Id, _allSymbols[i]);
+        }
+        
+
+        for (int i = 0; i < allSprites.Length; i++)
+        {
+            nameToSpriteData.Add(allSprites[i].name, allSprites[i]);
         }
     }
     

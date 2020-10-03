@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class ReelController : MonoBehaviour
 {
-
+        
+    public delegate void ReelStopped();
+    public event ReelStopped OnReelStopped;
 
     [SerializeField] private SymbolData[] _reelSymbols;
     [SerializeField] public SymbolData[] ReelSymbols
@@ -14,7 +16,7 @@ public class ReelController : MonoBehaviour
         set => _reelSymbols = value;
     }
 
-    [SerializeField] private Symbol[] displaySymbols;
+    [SerializeField] private Symbol[] _displaySymbols;
     
     private float[] positions = new float[]{2f,0f,-2f,-4f,-6f}; //it is on reel, en case we have different size reels, for this example could be on SlotController but this adds more flexibility (plus its on reels obcjet domain)
 
@@ -41,41 +43,40 @@ public class ReelController : MonoBehaviour
     [SerializeField] private bool _isSpinning = false;
 
 
-    void Start()
+    public void Setup(int[] reelSymbols)
     {
-        Setup();
+        _reelSymbols = new SymbolData[reelSymbols.Length];
+        for (int i = 0; i < _reelSymbols.Length; i++)
+        {
+            _reelSymbols[i] = DataManager.Instance.IdToSymbolData[reelSymbols[i]];
+        }
+        _reelSize = _displaySymbols.Length - 1;
+        RandomizeStartingSymbols();
     }
 
-    private void Setup()
+    private void RandomizeStartingSymbols()
     {
-        _reelSize = displaySymbols.Length - 1;
+        for (int i = 0; i < _displaySymbols.Length; i++)
+        {
+            _displaySymbols[i].Setup(_reelSymbols[Random.Range(0,_reelSymbols.Length)]);
+        }
     }
 
-
-    
-    /*ser results array
-    
-    if displaying
-    
-    symbol gets to bottom - > set result symbol, decrese result symbol index, mark as result set move up and wait in pos
-    
-    
-    */
     void Update()
     {
        if (_isSpinning)
         {
             float newY;
-            for (int i = 0; i < displaySymbols.Length; i++)
+            for (int i = 0; i < _displaySymbols.Length; i++)
             {
-                newY = displaySymbols[i].transform.localPosition.y - _speed * Time.deltaTime;
+                newY = _displaySymbols[i].transform.localPosition.y - _speed * Time.deltaTime;
                 
-                displaySymbols[i].transform.localPosition = new Vector3(0, newY);
+                _displaySymbols[i].transform.localPosition = new Vector3(0, newY);
 
-                if (displaySymbols[i].transform.localPosition.y <= positions[positions.Length-1])
+                if (_displaySymbols[i].transform.localPosition.y <= positions[positions.Length-1])
                 {
-                    MoveToFirstPos(displaySymbols[i].transform);
-                    displaySymbols[i].Setup(_reelSymbols[Random.Range(0, _reelSymbols.Length)]);
+                    MoveToFirstPos(_displaySymbols[i].transform);
+                    _displaySymbols[i].Setup(_reelSymbols[Random.Range(0, _reelSymbols.Length)]);
                 }
             }
 
@@ -84,10 +85,10 @@ public class ReelController : MonoBehaviour
 
         if (_settingResult)
         {
-            for (int i = 0; i < displaySymbols.Length; i++)
+            for (int i = 0; i < _displaySymbols.Length; i++)
             {
-                if (displaySymbols[i].ResultInfoSet &&
-                    displaySymbols[i].transform.position.y == displaySymbols[i].destinationPos)
+                if (_displaySymbols[i].ResultInfoSet &&
+                    _displaySymbols[i].transform.position.y == _displaySymbols[i].destinationPos)
                 {
                     continue; //Has result symbol, and on destination, continue
                 }
@@ -95,15 +96,15 @@ public class ReelController : MonoBehaviour
                 float newY;
                 //Move down
                 
-                newY = displaySymbols[i].transform.localPosition.y - _speed * Time.deltaTime;
-                displaySymbols[i].transform.localPosition = new Vector3(0,
+                newY = _displaySymbols[i].transform.localPosition.y - _speed * Time.deltaTime;
+                _displaySymbols[i].transform.localPosition = new Vector3(0,
                     newY);
 
-                if (displaySymbols[i].transform.localPosition.y <= positions[positions.Length - 1])
+                if (_displaySymbols[i].transform.localPosition.y <= positions[positions.Length - 1])
                 {
-                    MoveToFirstPos(displaySymbols[i].transform);
+                    MoveToFirstPos(_displaySymbols[i].transform);
 
-                    if (!displaySymbols[i].ResultInfoSet)
+                    if (!_displaySymbols[i].ResultInfoSet)
                     {
                         
                         if (_resultToApplyIndex <0)
@@ -111,16 +112,16 @@ public class ReelController : MonoBehaviour
                            continue;                    
                         }
                         
-                        ApplyResultInfo(displaySymbols[i]);
+                        ApplyResultInfo(_displaySymbols[i]);
                         _resultToApplyIndex--; //decrease result index
 
                     }
                        
                 }
 
-                if (displaySymbols[i].transform.localPosition.y <= displaySymbols[i].destinationPos && displaySymbols[i].HasDestination )
+                if (_displaySymbols[i].transform.localPosition.y <= _displaySymbols[i].destinationPos && _displaySymbols[i].HasDestination )
                 {
-                    displaySymbols[i].transform.localPosition = new Vector2(0,displaySymbols[i].destinationPos);
+                    _displaySymbols[i].transform.localPosition = new Vector2(0,_displaySymbols[i].destinationPos);
                     _resultSymbolsOnPos++;
                 }
             }
@@ -128,18 +129,20 @@ public class ReelController : MonoBehaviour
         
         }
 
-        if (_resultSymbolsOnPos == 3)
+        if (_resultSymbolsOnPos == 3 && _settingResult)
         {
             //spin end
             _settingResult = false;
 
-            for (int i = 0; i < displaySymbols.Length; i++)
+            for (int i = 0; i < _displaySymbols.Length; i++)
             {
-                if (displaySymbols[i].HasDestination == false)
+                if (_displaySymbols[i].HasDestination == false)
                 {
-                    displaySymbols[i].transform.localPosition = new Vector2(0,positions[_reelSize + 1]);
+                    _displaySymbols[i].transform.localPosition = new Vector2(0,positions[_reelSize + 1]);
                 }
             }
+
+            if (OnReelStopped != null) OnReelStopped();
         }
     }
 
@@ -154,7 +157,6 @@ public class ReelController : MonoBehaviour
     {
         _resultToApplyIndex = _reelSize-1;
         currentResult = (SymbolData[])result.Clone();
-        //Debug.Log("result applied: " + result[0].Name + " "+ result[1].Name + " "+ result[2].Name + " ");
     }
 
  
@@ -171,9 +173,9 @@ public class ReelController : MonoBehaviour
 
         _resultSymbolsOnPos = 0;
 
-        for (int i = 0; i < displaySymbols.Length; i++)
+        for (int i = 0; i < _displaySymbols.Length; i++)
         {
-            displaySymbols[i].Reset();
+            _displaySymbols[i].Reset();
         }
     }
 

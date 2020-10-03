@@ -32,16 +32,7 @@ namespace AninoExam
     public class SlotController : Singleton<SlotController>
     {
         private GameState currentGameState = GameState.Loading;
-        
-        //Lookup dict for access to data based on id or name
-       /* private Dictionary<string, SymbolSO> nameToSymbol = new Dictionary<string, SymbolSO>();
-        private Dictionary<int, SymbolSO> idToSymbol = new Dictionary<int, SymbolSO>();*/
-        
 
-
-        //All data regarding symbols of the slot machien
-        //[SerializeField] private SymbolSO[] allSymbols = new SymbolSO[] { };
-        //public SymbolSO[] AllSymbols => allSymbols;
         
         //References to the reels of the machine
         [SerializeField] private ReelController[] _reels;
@@ -66,11 +57,15 @@ namespace AninoExam
             set => _maxPaylines = value;
         }
 
+        
+        
         private int _selectedPaylines;
         
         
         private int _currentPrize = 0;
 
+        
+        private int _spinningSlots;
         //RESULTS
 
         private SymbolData[][] currentReelResult = null;
@@ -94,20 +89,41 @@ namespace AninoExam
         {
 
             _paylines = setupData.Paylines;
-            
             _paylines = setupData.Paylines;
             _selectedPaylines = _maxPaylines;
             
             for (int i = 0; i < setupData.ReelSymbolIDs.GetLength(0); i++)
             {
-                _reels[i].ReelSymbols = new SymbolData[setupData.ReelSymbolIDs[i].Length];
-                for (int j = 0; j < setupData.ReelSymbolIDs[i].Length; j++)
-                {
-                    _reels[i].ReelSymbols[j] = DataManager.Instance.IdToSymbolData[setupData.ReelSymbolIDs[i][j]];
-                }
+                _reels[i].Setup(setupData.ReelSymbolIDs[i]);
             }
-            
+
+            AddEventListeners();
             ChangeGameState(GameState.GettingResult);
+        }
+
+        private void AddEventListeners()
+        {
+            for (int i = 0; i < _reels.Length; i++)
+            {
+                _reels[i].OnReelStopped += ProcessReelStopped;
+            }
+        }
+
+        private void RemoveEventListeners()
+        {
+            for (int i = 0; i < _reels.Length; i++)
+            {
+                _reels[i].OnReelStopped -= ProcessReelStopped;
+            }
+        }
+
+        private void ProcessReelStopped()
+        {
+            _spinningSlots--;
+            if (_spinningSlots == 0)
+            {
+                ChangeGameState(GameState.GettingResult);
+            }
         }
 
         // Update is called once per frame
@@ -135,6 +151,8 @@ namespace AninoExam
                 {
                     _reels[i].StartSpinning();
                 }
+
+                _spinningSlots = _reels.Length;
                 currentGameState = GameState.Spinning;
             }
             else if (currentGameState == GameState.Spinning)
@@ -149,8 +167,6 @@ namespace AninoExam
                 {
                     _reels[i].DisplayResults();
                 }
-
-                currentGameState = GameState.None;
             }
         }
 
@@ -204,7 +220,7 @@ namespace AninoExam
                     currentReelResult[i][j] = reelResult[j];
                 }
 
-               // _reels[i].SetResult(reelResult);
+                _reels[i].SetResult(reelResult);
             }
 
             /*for (int i = 0; i < currentReelResult.Length; i++)
