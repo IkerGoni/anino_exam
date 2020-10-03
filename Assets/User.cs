@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class User : Singleton<User>
+public class User
 {
     
-    private int _chips;
+    private int _chips = 500;
+    public int Chips => _chips;
 
     public void AddChips(int chips)
     {

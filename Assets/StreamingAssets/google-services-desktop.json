@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "610086941560",
+    "firebase_url": "https://aninotest-93658.firebaseio.com",
+    "project_id": "aninotest-93658",
+    "storage_bucket": "aninotest-93658.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610086941560:android:56bbb699cb7e014b014e8d",
+        "android_client_info": {
+          "package_name": "com.Iker.AninoSlotTest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "610086941560-de7l8lr4iiga0knlr1tdabdp19vtlmhh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6W5ihVqPaQR1PhyQEiOQBA1tNbQbkwBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "610086941560-de7l8lr4iiga0knlr1tdabdp19vtlmhh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

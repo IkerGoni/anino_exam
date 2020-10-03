@@ -21,16 +21,21 @@
             <e p="readme.txt" t="Include" />
           </e>
         </e>
+        <e p="RemoteConfigFetcher.cs" t="Include" />
         <e p="ScriptableObjects" t="Include">
           <e p="SymbolSO.cs" t="Include" />
         </e>
         <e p="Scripts" t="Include">
+          <e p="Data Classes" t="Include">
+            <e p="SymbolData.cs" t="Include" />
+          </e>
           <e p="DataManager.cs" t="Include" />
           <e p="ReelController.cs" t="Include" />
           <e p="Singleton.cs" t="Include" />
           <e p="SlotController.cs" t="Include" />
           <e p="Symbol.cs" t="Include" />
         </e>
+        <e p="TesterClass.cs" t="Include" />
         <e p="TextMesh Pro" t="Include">
           <e p="Fonts" t="Include">
             <e p="LiberationSans - OFL.txt" t="Include" />

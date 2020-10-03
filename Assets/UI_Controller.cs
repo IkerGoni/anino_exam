@@ -28,6 +28,6 @@ public class UI_Controller : Singleton<UI_Controller>
     {
         _increaseBetButton.onClick.AddListener(SlotController.Instance.IncreaseBetStep);
         _decreaseBetButton.onClick.AddListener(SlotController.Instance.DecreaseBetStep);
-        _spintButton.onClick.AddListener(SlotController.Instance.Spin);
+        _spintButton.onClick.AddListener(SlotController.Instance.SpinButtonClicked);
     }
 }

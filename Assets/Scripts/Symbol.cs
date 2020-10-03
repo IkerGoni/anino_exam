@@ -5,9 +5,10 @@ using UnityEngine;
 public class Symbol : MonoBehaviour
 {
 
-    [SerializeField] private SymbolSO _symbolConfig;
-    public SymbolSO ResultSymbol => _resultSymbol;
-    [SerializeField] private SymbolSO _resultSymbol;
+    [SerializeField] private SymbolData _symbolConfig;
+    [SerializeField] private SymbolData _symbolData;
+    public SymbolData ResultSymbol => _resultSymbol;
+    [SerializeField] private SymbolData _resultSymbol;
     [SerializeField] private int id;
     public bool HasDestination = false;
     public bool ResultInfoSet = false;
@@ -15,13 +16,19 @@ public class Symbol : MonoBehaviour
     
     [SerializeField] private SpriteRenderer _symbolImage;
 
-    public void Setup(SymbolSO symbolConfig)
+   /* public void Setup(SymbolData symbolConfig)
     {
         _symbolConfig = symbolConfig;
         _symbolImage.sprite = _symbolConfig.Image;
     }
-
-    public void SetResultInfo(float posY, SymbolSO resultSymbol)
+    */
+    public void Setup(SymbolData symbolData)
+    {
+        _symbolData = symbolData;
+        _symbolImage.sprite = Resources.Load<Sprite>("Sprites/"+symbolData.Image);
+    }
+    
+    public void SetResultInfo(float posY, SymbolData resultSymbol)
     {
         destinationPos = posY;
         HasDestination = true;

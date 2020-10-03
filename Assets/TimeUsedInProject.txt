@@ -10,4 +10,9 @@ process paylines, create logic 30 mins
 
 generate random results on local, fix small bugs, review result logic 1h
 
-start settting UI and UI manager 40m
+start settting UI and UI manager 45m
+
+setting firebase 30 mins
+
+heady code refactor, from Scriptable onjects to data classes to work with firebase
+change loading system, online fetcher, create json files, parse them... 3h

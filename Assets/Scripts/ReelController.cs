@@ -7,27 +7,28 @@ public class ReelController : MonoBehaviour
 {
 
 
-    [SerializeField] private SymbolSO[] _reelSymbols;
-    [SerializeField] public SymbolSO[] ReelSymbols=>_reelSymbols;
+    [SerializeField] private SymbolData[] _reelSymbols;
+    [SerializeField] public SymbolData[] ReelSymbols
+    {
+        get => _reelSymbols;
+        set => _reelSymbols = value;
+    }
+
     [SerializeField] private Symbol[] displaySymbols;
     
     private float[] positions = new float[]{2f,0f,-2f,-4f,-6f}; //it is on reel, en case we have different size reels, for this example could be on SlotController but this adds more flexibility (plus its on reels obcjet domain)
 
-    [SerializeField] private float _speed = 5f;
+    [SerializeField] private float _speed = 20f;
 
 
-    private SymbolSO[] currentResult;
+    private SymbolData[] currentResult;
     private int _resultToApplyIndex;
     private bool _settingResult;
 
 
     private int _resultSymbolsOnPos = 0;
 
-    public float Speed
-    {
-        get { return _speed;}
-        set { _speed = value; }
-    }
+  
     
     [SerializeField] private int _reelSize = 3;
 
@@ -149,10 +150,10 @@ public class ReelController : MonoBehaviour
 
     //  {{"A", "A", "A", "B", "C"}, {"B", "A", "C", "F", "G"}, {"A", "G", "B", "D", "E"}};
 
-    public void SetResult(SymbolSO[] result)
+    public void SetResult(SymbolData[] result)
     {
         _resultToApplyIndex = _reelSize-1;
-        currentResult = (SymbolSO[])result.Clone();
+        currentResult = (SymbolData[])result.Clone();
         //Debug.Log("result applied: " + result[0].Name + " "+ result[1].Name + " "+ result[2].Name + " ");
     }
 

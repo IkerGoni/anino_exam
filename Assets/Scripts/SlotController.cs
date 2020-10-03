@@ -1,84 +1,147 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.U2D;
 using UnityEngine;
 
 namespace AninoExam
 {
+    public enum GameState
+    {
+        None,
+        Loading,
+        Setup,
+        Start,
+        Ready,
+        GettingResult,
+        StartSpin,
+        Spinning,
+        StoppingSpin,
+        SpinFinished,
+    }
+
+    public class SlotSetupData
+    {
+        public int[][] Paylines;
+        public SymbolData[] AllSymbols;
+        public int MaxPaylines;
+        public int[][] ReelSymbolIDs;
+    }
+
     public class SlotController : Singleton<SlotController>
     {
-        //public static SlotController Instance;
+        private GameState currentGameState = GameState.Loading;
+        
+        //Lookup dict for access to data based on id or name
+       /* private Dictionary<string, SymbolSO> nameToSymbol = new Dictionary<string, SymbolSO>();
+        private Dictionary<int, SymbolSO> idToSymbol = new Dictionary<int, SymbolSO>();*/
+        
 
-        private Dictionary<string, SymbolSO> nameToSymbol = new Dictionary<string, SymbolSO>();
-        private Dictionary<int, SymbolSO> idToSymbol = new Dictionary<int, SymbolSO>();
 
-        [SerializeField] private SymbolSO[] allSymbols = new SymbolSO[] { };
-
+        //All data regarding symbols of the slot machien
+        //[SerializeField] private SymbolSO[] allSymbols = new SymbolSO[] { };
+        //public SymbolSO[] AllSymbols => allSymbols;
+        
+        //References to the reels of the machine
         [SerializeField] private ReelController[] _reels;
         [HideInInspector] public ReelController[] Reels => _reels;
 
+        //Control vars - > move to state machine
         [SerializeField] private bool _startSpinning = false;
-
         [SerializeField] private bool _stopSpinning = false;
         //  [SerializeField] private bool _getResult = false;
 
         [Header("ConfigVars Settings")] [SerializeField]
         private float _spinSpeed = 5f;
 
-
+        //Slot game vars
         private int _betStep = 1;
-        private int _currentBetValue = 1;
+        private int _selectedBet = 1;
+        
+        private int _maxPaylines = 20;
+        public int MaxPaylines
+        {
+            get => _maxPaylines;
+            set => _maxPaylines = value;
+        }
+
+        private int _selectedPaylines;
+        
+        
+        private int _currentPrize = 0;
 
         //RESULTS
 
-        private SymbolSO[][] currentReelResult = null;
-
+        private SymbolData[][] currentReelResult = null;
         private int[][] _paylines;
 
 
         void Start()
         {
-            BuildLookupDictionary();
-            SetupSlotMachine();
+           /* BuildLookupDictionary();
+            SetupSlotMachine();*/
         }
 
-        private void BuildLookupDictionary()
+       
+
+        public void ChangeGameState(GameState newGameState)
         {
-            for (int i = 0; i < allSymbols.Length; i++)
-            {
-                nameToSymbol.Add(allSymbols[i].Name, allSymbols[i]);
-                idToSymbol.Add(allSymbols[i].Id, allSymbols[i]);
-            }
+            currentGameState = newGameState;
         }
 
-        void SetupSlotMachine()
+        public void SetupSlotMachine(SlotSetupData setupData)
         {
-            for (int i = 0; i < _reels.Length; i++)
-            {
-                _reels[i].Speed = _spinSpeed;
-            }
 
-            _paylines = DataManager.Instance.GetSlotPaylines();
+            _paylines = setupData.Paylines;
+            
+            _paylines = setupData.Paylines;
+            _selectedPaylines = _maxPaylines;
+            
+            for (int i = 0; i < setupData.ReelSymbolIDs.GetLength(0); i++)
+            {
+                _reels[i].ReelSymbols = new SymbolData[setupData.ReelSymbolIDs[i].Length];
+                for (int j = 0; j < setupData.ReelSymbolIDs[i].Length; j++)
+                {
+                    _reels[i].ReelSymbols[j] = DataManager.Instance.IdToSymbolData[setupData.ReelSymbolIDs[i][j]];
+                }
+            }
+            
+            ChangeGameState(GameState.GettingResult);
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (_startSpinning)
+            if (currentGameState == GameState.Loading)
             {
-
+                //wait for preparing data
+                return;
+            }
+            else if (currentGameState == GameState.GettingResult)
+            {
                 GetSpinResult();
+            
+                ChangeGameState(GameState.Ready);
+            }
+            else if (currentGameState == GameState.Ready)
+            {
+                
+            }
+            else if (currentGameState == GameState.StartSpin)
+            {
 
                 for (int i = 0; i < _reels.Length; i++)
                 {
                     _reels[i].StartSpinning();
                 }
-
-                _startSpinning = false;
+                currentGameState = GameState.Spinning;
             }
-
-            if (_stopSpinning)
+            else if (currentGameState == GameState.Spinning)
+            {
+                //reels are spining
+            }
+            else if (currentGameState == GameState.StoppingSpin)
             {
                 //reels[0].DisplayResults();
 
@@ -87,28 +150,34 @@ namespace AninoExam
                     _reels[i].DisplayResults();
                 }
 
-                _stopSpinning = false;
-
-
+                currentGameState = GameState.None;
             }
-
-            /* if (_getResult)
-             {
-                 _getResult = false;
-                 GetSpinResult();
-             }*/
-
         }
 
 
-        public void Spin()
+        public void SpinButtonClicked()
         {
-            _startSpinning = true;
+            if (currentGameState == GameState.Ready)
+            {
+             
+                if(DataManager.Instance.User.Chips>_selectedBet*_selectedPaylines )
+                    ChangeGameState(GameState.StartSpin);
+                else
+                    Debug.Log("Not enough chips"); //Chance to launch IAP shop
+                
+                //TODO spinStartEvent
+            }
+            else if (currentGameState == GameState.Spinning)
+            {
+                 ChangeGameState(GameState.StoppingSpin);
+            } 
+
+           
         }
         
         /// <summary>
         /// This method should get called as soon as the spin starts, and call apply result in a successful callback.
-        /// As we are not using any backend, we will call ApplyResults directly
+        /// For the exercise is requested to prepare the result before spinning.
         /// </summary>
         private void GetSpinResult()
         {
@@ -116,27 +185,26 @@ namespace AninoExam
             EvaluatePaylines();
         }
 
-        //  {{"A", "A", "A", "B", "C"}, {"B", "A", "C", "F", "G"}, {"A", "G", "B", "D", "E"}};
         /// <summary>
         /// This method would get called on a callback of getSpinResults to the backend
         /// </summary>
         void ApplySpinResults(string[][] spinResult)
         {
             ResetCurrentResult();
-            SymbolSO[]
+            SymbolData[]
                 reelResult =
-                    new SymbolSO[_reels[0]
+                    new SymbolData[_reels[0]
                         .ReelSize]; //This is out from the next loop bc we know that all reels have same number of symbols. In other shaped slots, should be inside the loop
 
             for (int i = 0; i < _reels.Length; i++)
             {
                 for (int j = _reels[i].ReelSize - 1; j >= 0; j--)
                 {
-                    reelResult[j] = nameToSymbol[spinResult[j][i]];
+                    reelResult[j] = DataManager.Instance.NameToSymbolData[spinResult[j][i]];
                     currentReelResult[i][j] = reelResult[j];
                 }
 
-                _reels[i].SetResult(reelResult);
+               // _reels[i].SetResult(reelResult);
             }
 
             /*for (int i = 0; i < currentReelResult.Length; i++)
@@ -150,17 +218,17 @@ namespace AninoExam
 
         void ResetCurrentResult()
         {
-            currentReelResult = new SymbolSO[_reels.Length][];
+            currentReelResult = new SymbolData[_reels.Length][];
             for (int i = 0; i < currentReelResult.Length; i++)
             {
-                currentReelResult[i] = new SymbolSO[_reels[i].ReelSize];
+                currentReelResult[i] = new SymbolData[_reels[i].ReelSize];
             }
         }
 
         private void EvaluatePaylines()
         {
             int total = 0;
-            for (int i = 0; i < _paylines.GetLength(0); i++)
+            for (int i = 0; i < _maxPaylines; i++)
             {
                 int currentPayLinePrice = GetPaylinePrize(_paylines[i]);
                 if (currentPayLinePrice > 0)
@@ -211,7 +279,7 @@ namespace AninoExam
 
             foreach (KeyValuePair<int, int> entry in symbolAppareances)
             {
-                linePrize += idToSymbol[entry.Key].Payout[entry.Value];
+                linePrize += DataManager.Instance.IdToSymbolData[entry.Key].Payout[entry.Value];
             }
 
             return linePrize;
@@ -223,12 +291,12 @@ namespace AninoExam
 
         public void IncreaseBetStep()
         {
-            _currentBetValue += _betStep;
+            _selectedBet += _betStep;
         }
         
         public void DecreaseBetStep()
         {
-            _currentBetValue += _betStep;
+            _selectedBet -= _betStep;
         }
 
     #endregion
