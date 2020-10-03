@@ -49,6 +49,7 @@ namespace AninoExam
         //Slot game vars
         private int _betStep = 1;
         private int _selectedBet = 1;
+        public int SelectedBet => _selectedBet;
         
         private int _maxPaylines = 20;
         public int MaxPaylines
@@ -63,6 +64,7 @@ namespace AninoExam
         
         
         private int _currentPrize = 0;
+        public int CurrentPrize => _currentPrize;
 
         
         private int _spinningSlots;
@@ -122,7 +124,7 @@ namespace AninoExam
             _spinningSlots--;
             if (_spinningSlots == 0)
             {
-                ChangeGameState(GameState.GettingResult);
+                ChangeGameState(GameState.SpinFinished);
             }
         }
 
@@ -136,6 +138,8 @@ namespace AninoExam
             }
             else if (currentGameState == GameState.GettingResult)
             {
+                UI_Controller.Instance.UpdateUIPreSpin();
+
                 GetSpinResult();
             
                 ChangeGameState(GameState.Ready);
@@ -146,14 +150,16 @@ namespace AninoExam
             }
             else if (currentGameState == GameState.StartSpin)
             {
-
+                
+                UI_Controller.Instance.UpdateUIStartpin();
+                
                 for (int i = 0; i < _reels.Length; i++)
                 {
                     _reels[i].StartSpinning();
                 }
 
                 _spinningSlots = _reels.Length;
-                currentGameState = GameState.Spinning;
+                ChangeGameState(GameState.Spinning);
             }
             else if (currentGameState == GameState.Spinning)
             {
@@ -168,6 +174,16 @@ namespace AninoExam
                     _reels[i].DisplayResults();
                 }
             }
+            else if (currentGameState == GameState.SpinFinished)
+            {
+                if(_currentPrize>0)
+                    DataManager.Instance.User.AddChips(_currentPrize*_selectedBet);
+                
+                UI_Controller.Instance.UpdateUIPostSpin();
+
+                ChangeGameState(GameState.GettingResult);
+
+            }
         }
 
 
@@ -175,9 +191,13 @@ namespace AninoExam
         {
             if (currentGameState == GameState.Ready)
             {
-             
-                if(DataManager.Instance.User.Chips>_selectedBet*_selectedPaylines )
+
+                if (DataManager.Instance.User.Chips >= _selectedBet * _selectedPaylines)
+                {
+                    DataManager.Instance.User.SubstractChips( _selectedBet * _selectedPaylines);
                     ChangeGameState(GameState.StartSpin);
+                }
+
                 else
                     Debug.Log("Not enough chips"); //Chance to launch IAP shop
                 
@@ -222,14 +242,6 @@ namespace AninoExam
 
                 _reels[i].SetResult(reelResult);
             }
-
-            /*for (int i = 0; i < currentReelResult.Length; i++)
-            {
-                for (int j = 0; j < currentReelResult[i].Length; j++)
-                {
-                    Debug.Log(currentReelResult[i][j].Name);
-                }
-            }*/
         }
 
         void ResetCurrentResult()
@@ -243,16 +255,23 @@ namespace AninoExam
 
         private void EvaluatePaylines()
         {
-            int total = 0;
+            _currentPrize = 0;
             for (int i = 0; i < _maxPaylines; i++)
             {
                 int currentPayLinePrice = GetPaylinePrize(_paylines[i]);
                 if (currentPayLinePrice > 0)
-                    Debug.Log("payline with price: " + currentPayLinePrice);
-                total += currentPayLinePrice;
+                {
+                    Debug.Log("payline "+_paylines[i][0].ToString()+", "
+                              +_paylines[i][1].ToString()+", "
+                              +_paylines[i][2].ToString()+", "
+                              +_paylines[i][3].ToString()+", "
+                              +_paylines[i][4].ToString()+", with price: " + currentPayLinePrice);
+                    _currentPrize += currentPayLinePrice*_selectedBet;
+                }
             }
 
-            Debug.Log($"Total: {total}");
+            Debug.Log("TOTAL PRIZE: " + _currentPrize);
+            Debug.Log("---------------------------------");
         }
 
         //first try was with SymbolSO as key, but the are not equal (obviusly), storing the id 
@@ -282,8 +301,6 @@ namespace AninoExam
                 {
                     paylineS += payline[i] + ", ";
                 }
-
-                Debug.Log(paylineS);
             }
 
             return paylinePrize;

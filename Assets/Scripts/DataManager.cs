@@ -157,24 +157,20 @@ public class DataManager : Singleton<DataManager>
         _paylines = new int[wrapper.Paylines.Length][];
         for (int i = 0; i < wrapper.Paylines.Length; i++)
         {
+            _paylines[i] = new int[wrapper.Paylines[i].Payline.Length];
+
             for (int j = 0; j < wrapper.Paylines[i].Payline.Length; j++)
             {
-                _paylines[i] = new int[wrapper.Paylines[i].Payline.Length];
-
                 _paylines[i][j] = wrapper.Paylines[i].Payline[j];
             }
-        }
-     
-        Debug.Log("paylines parsed");   
+        }     
     }
 
     public void ParseAllSymbolDataFromJSON(string data)
     {
         AllSymbolsWrapper wrapper = JsonUtility.FromJson<AllSymbolsWrapper>(data);
 
-        _allSymbols = (SymbolData[]) wrapper.Symbols.ToArray().Clone();
-        Debug.Log("allSymbolData parsed");   
-        
+        _allSymbols = (SymbolData[]) wrapper.Symbols.ToArray().Clone();        
     }
     
     public void ParseReelsSymbolsIDsFromJSON(string data)
@@ -189,10 +185,7 @@ public class DataManager : Singleton<DataManager>
             {
                 _reelsSymbolIDs[i][j] = wrapper.ReelsSymbolData[i].SymbolDataIDs[j];
             }
-        }
-        //_reelsSymbolIDs
-        Debug.Log("reel symbol ids parsed");   
-     
+        }     
     }
     
     public int[][] GetSlotPaylines()

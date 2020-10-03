@@ -16,3 +16,16 @@ setting firebase 30 mins
 
 heady code refactor, from Scriptable onjects to data classes to work with firebase
 change loading system, online fetcher, create json files, parse them... 3h
+
+
+Improvements
+
+Event handler class. So classes don't need to know about each other. Just trigger events/listen to events on a list of events there.
+Helps decoupling classes and cuts dependencies. Didn't do bc of time constrains.
+
+Finish the code to accept different size reels. Code is directed and prepared for that on a degree
+
+UI controller is "dirty" and implemented fast just to make it work. Use of events would be better to update it than the current system.
+
+UI -> separate static and not static images/texts. Improve performance as not need to make all dirty and render again.
+

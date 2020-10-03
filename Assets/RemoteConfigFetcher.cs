@@ -77,11 +77,16 @@ public class RemoteConfigFetcher : MonoBehaviour
 
     private const int _local_MaxLines = 20;
     
-    private const string _local_ReelsIDs =
-        "{\"ReelsSymbolData\":[{\"SymbolDataIDs\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},{\"SymbolDataIDs\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},{\"SymbolDataIDs\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},{\"SymbolDataIDs\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},{\"SymbolDataIDs\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]}]}";
+    //private const string _local_ReelsIDs = "{\"ReelsSymbolData\":[{\"SymbolDataIDs\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},{\"SymbolDataIDs\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},{\"SymbolDataIDs\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},{\"SymbolDataIDs\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},{\"SymbolDataIDs\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]}]}";
+
+   
+    //easy mode local
+    private const string _local_ReelsIDs = "{\"ReelsSymbolData\":[{\"SymbolDataIDs\":[0,1,2,3,4,5]},{\"SymbolDataIDs\":[0,1,2,3,4,5,6]},{\"SymbolDataIDs\":[0,1,2,3,4,5]},{\"SymbolDataIDs\":[0,1,2,3,4,5,6]},{\"SymbolDataIDs\":[0,1,2,3,4,5]}]}";
 
     #endregion
 
+    public bool ForceLocalData = false;
+    
     #region FirebaseKeys
 
     private const string _keyPaylines = "AllPaylines";
@@ -114,10 +119,8 @@ public class RemoteConfigFetcher : MonoBehaviour
             if (task.IsCanceled || task.IsFaulted)
             {
                 if (completionHandler != null) completionHandler(false);
-                Debug.Log("Failed.");
-            } else {
-                Debug.Log("Completed.");
-            }
+                return;
+            } 
             Firebase.RemoteConfig.FirebaseRemoteConfig.ActivateFetched();
 
            if (completionHandler != null) completionHandler(true);
@@ -125,7 +128,19 @@ public class RemoteConfigFetcher : MonoBehaviour
     }
 
     public void Handler(bool success)
-    {        
+    {
+        if (ForceLocalData)
+        {
+            DataManager.Instance.ParsePaylinesFromJSON(_local_AllPaylines);
+            DataManager.Instance.ParseAllSymbolDataFromJSON(_local_AllSymbols);
+            DataManager.Instance.MaxPaylines = _local_MaxLines;
+            DataManager.Instance.ParseReelsSymbolsIDsFromJSON(_local_ReelsIDs);
+            
+            DataManager.Instance.DataLoaded = true;
+
+            return;
+        }
+        
         if (success)
         {
             DataManager.Instance.DataLoaded = false;
