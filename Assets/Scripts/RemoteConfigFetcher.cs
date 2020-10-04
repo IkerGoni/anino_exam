@@ -98,7 +98,7 @@ public class RemoteConfigFetcher : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Invoke("StartFetching", 0.3f);
+        StartFetching();
     }
 
     void StartFetching()

@@ -76,10 +76,13 @@ public class DataManager : Singleton<DataManager>
         get { return _dataLoaded; }
         set
         {
-            if (value)
+            if (value && !_dataLoaded) //first launch
             {
                 BuildLookupDictionaries();
                 InjectSlotData();
+                UI_Controller.Instance.PaylineCanvas.SetupPaylineCanvas(_paylines); //not really clean, but trying to close the test due to out of time.
+                UI_Controller.Instance.PayoutCanvas.Setup(_allSymbols);
+
             }
 
             _dataLoaded = value;
@@ -118,34 +121,6 @@ public class DataManager : Singleton<DataManager>
     {
         return GenerateResult();
     }
-
-    
-
-    
-    /*
-    private static int[][] paylines =
-    {
-        new int[] {1, 1, 1, 1, 1},
-        new int[] {0, 0, 0, 0, 0},
-        new int[] {2, 2, 2, 2, 2},
-        new int[] {0, 1, 2, 1, 0},
-        new int[] {2, 1, 0, 1, 2},
-        new int[] {0, 0, 1, 2, 2},
-        new int[] {2, 2, 1, 0, 0},
-        new int[] {1, 0, 1, 2, 1},
-        new int[] {1, 2, 1, 0, 1},
-        new int[] {1, 0, 0, 1, 0},
-        new int[] {1, 2, 2, 1, 2},
-        new int[] {0, 1, 0, 0, 1},
-        new int[] {2, 1, 2, 2, 1},
-        new int[] {0, 2, 0, 2, 0},
-        new int[] {2, 0, 2, 0, 2},
-        new int[] {1, 0, 2, 0, 1},
-        new int[] {1, 2, 0, 2, 1},
-        new int[] {0, 1, 1, 1, 0},
-        new int[] {2, 1, 1, 1, 2},
-        new int[] {0, 2, 2, 2, 0}
-    };*/
 
     /// <summary>
     /// gets a string json of AllPaylinesWrapper -> PaylinesWrapper[] Paylines -> int[] Payline and saves it into paylines variable

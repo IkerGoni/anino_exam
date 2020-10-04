@@ -8,6 +8,12 @@ TextureImporter:
   - first:
       213: 8677923864869055282
     second: minusButton
+  - first:
+      213: 3899703420858687672
+    second: closeButton
+  - first:
+      213: 4245123048664881678
+    second: InfoButton
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -120,7 +126,7 @@ TextureImporter:
         width: 13
         height: 13
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -141,7 +147,7 @@ TextureImporter:
         width: 14
         height: 13
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -149,6 +155,48 @@ TextureImporter:
       bones: []
       spriteID: e15a5b051a0da564a8edb73811c4d829
       internalID: 8677923864869055282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: closeButton
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 104
+        width: 25
+        height: 23
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d0b4b23f5be5d3948b1b55f55f580312
+      internalID: 3899703420858687672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: InfoButton
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 78
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf1a062505f3e2242beb5732f1a83109
+      internalID: 4245123048664881678
       vertices: []
       indices: 
       edges: []

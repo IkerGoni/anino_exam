@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5964768456627864631
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7167096301905218992}
+  - component: {fileID: 8130341862119950089}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7167096301905218992
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5964768456627864631}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 115.60812, y: 40.789402, z: -90.57646}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8130341862119950089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5964768456627864631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36ed33bea6181ad40b17f8c449319cb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _increaseBetAudio: {fileID: 8300000, guid: 1c5e0bcdc9dc7e54aa17b37f325592e9, type: 3}
+  _decreaseBetAudio: {fileID: 8300000, guid: 7485190a558feb04f826b780f3df2542, type: 3}
+  _ClickedAudio: {fileID: 8300000, guid: 019abfa0a1e2c9641bae50b097434981, type: 3}
+  _SpinStartAudio: {fileID: 8300000, guid: 173b300be0f40b74eafd60fdf15b1a9b, type: 3}
+  _SpinStopAudio: {fileID: 8300000, guid: 03b7b5c4698f8b1449724b55dd813a34, type: 3}
+  _WinResultAudio: {fileID: 8300000, guid: ca16108f7fee41c4fa286a6a38994165, type: 3}
+  _ErrorAudio: {fileID: 8300000, guid: c29b335877edcca4aa0f3af1d6d45519, type: 3}
+  _ChipsAudio: {fileID: 8300000, guid: 769c7ee15d2dc5a4a83b6c43c4662f4d, type: 3}

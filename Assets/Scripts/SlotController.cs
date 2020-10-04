@@ -19,12 +19,12 @@ namespace AninoExam
         Spinning,
         StoppingSpin,
         SpinFinished,
+        SpinFeedback,
     }
 
     public class SlotSetupData
     {
         public int[][] Paylines;
-        public SymbolData[] AllSymbols;
         public int MaxPaylines;
         public int[][] ReelSymbolIDs;
     }
@@ -38,14 +38,6 @@ namespace AninoExam
         [SerializeField] private ReelController[] _reels;
         [HideInInspector] public ReelController[] Reels => _reels;
 
-        //Control vars - > move to state machine
-        [SerializeField] private bool _startSpinning = false;
-        [SerializeField] private bool _stopSpinning = false;
-        //  [SerializeField] private bool _getResult = false;
-
-        [Header("ConfigVars Settings")] [SerializeField]
-        private float _spinSpeed = 5f;
-
         //Slot game vars
         private int _betStep = 1;
         private int _selectedBet = 1;
@@ -54,13 +46,12 @@ namespace AninoExam
         private int _maxPaylines = 20;
         public int MaxPaylines
         {
-            get => _maxPaylines;
             set => _maxPaylines = value;
         }
 
         
         
-        private int _selectedPaylines;
+        private int _selectedPaylines; //even not in use, would be nice if user could reduce the paylines in use (I know that is unusual on social casino though)
         
         
         private int _currentPrize = 0;
@@ -74,14 +65,6 @@ namespace AninoExam
         private int[][] _paylines;
 
 
-        void Start()
-        {
-           /* BuildLookupDictionary();
-            SetupSlotMachine();*/
-        }
-
-       
-
         public void ChangeGameState(GameState newGameState)
         {
             currentGameState = newGameState;
@@ -89,9 +72,8 @@ namespace AninoExam
 
         public void SetupSlotMachine(SlotSetupData setupData)
         {
-
             _paylines = setupData.Paylines;
-            _paylines = setupData.Paylines;
+            _maxPaylines = setupData.MaxPaylines;
             _selectedPaylines = _maxPaylines;
             
             for (int i = 0; i < setupData.ReelSymbolIDs.GetLength(0); i++)
@@ -100,6 +82,8 @@ namespace AninoExam
             }
 
             AddEventListeners();
+            
+            UI_Controller.Instance.HideBlackPanel();
             ChangeGameState(GameState.GettingResult);
         }
 
@@ -144,10 +128,8 @@ namespace AninoExam
             
                 ChangeGameState(GameState.Ready);
             }
-            else if (currentGameState == GameState.Ready)
-            {
-                
-            }
+           
+            
             else if (currentGameState == GameState.StartSpin)
             {
                 
@@ -159,15 +141,12 @@ namespace AninoExam
                 }
 
                 _spinningSlots = _reels.Length;
+                
+                AudioManager.Instance.PlayAudio(Audio.SpinStart);
                 ChangeGameState(GameState.Spinning);
-            }
-            else if (currentGameState == GameState.Spinning)
-            {
-                //reels are spining
-            }
+            }      
             else if (currentGameState == GameState.StoppingSpin)
             {
-                //reels[0].DisplayResults();
 
                 for (int i = 0; i < _reels.Length; i++)
                 {
@@ -175,14 +154,11 @@ namespace AninoExam
                 }
             }
             else if (currentGameState == GameState.SpinFinished)
-            {
+            {   
                 if(_currentPrize>0)
                     DataManager.Instance.User.AddChips(_currentPrize*_selectedBet);
                 
                 UI_Controller.Instance.UpdateUIPostSpin();
-
-                ChangeGameState(GameState.GettingResult);
-
             }
         }
 
@@ -199,7 +175,12 @@ namespace AninoExam
                 }
 
                 else
+                {
+                    AudioManager.Instance.PlayAudio(Audio.Error);
                     Debug.Log("Not enough chips"); //Chance to launch IAP shop
+
+                }
+
                 
                 //TODO spinStartEvent
             }
@@ -256,22 +237,19 @@ namespace AninoExam
         private void EvaluatePaylines()
         {
             _currentPrize = 0;
-            for (int i = 0; i < _maxPaylines; i++)
+            for (int i = 0; i < _selectedPaylines; i++)
             {
                 int currentPayLinePrice = GetPaylinePrize(_paylines[i]);
                 if (currentPayLinePrice > 0)
                 {
-                    Debug.Log("payline "+_paylines[i][0].ToString()+", "
+                /*    Debug.Log("payline "+_paylines[i][0].ToString()+", "
                               +_paylines[i][1].ToString()+", "
                               +_paylines[i][2].ToString()+", "
                               +_paylines[i][3].ToString()+", "
-                              +_paylines[i][4].ToString()+", with price: " + currentPayLinePrice);
+                              +_paylines[i][4].ToString()+", with price: " + currentPayLinePrice);*/
                     _currentPrize += currentPayLinePrice*_selectedBet;
                 }
             }
-
-            Debug.Log("TOTAL PRIZE: " + _currentPrize);
-            Debug.Log("---------------------------------");
         }
 
         //first try was with SymbolSO as key, but the are not equal (obviusly), storing the id 

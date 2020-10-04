@@ -6,6 +6,8 @@ trying to make the reels show result stopping on site 1h
 30 mins reels stop on result positon animated
 paylines creation 20 mins
 
+2h
+
 process paylines, create logic 30 mins
 
 generate random results on local, fix small bugs, review result logic 1h
@@ -14,10 +16,21 @@ start settting UI and UI manager 45m
 
 setting firebase 30 mins
 
+2h45
 heady code refactor, from Scriptable onjects to data classes to work with firebase
 change loading system, online fetcher, create json files, parse them... 3h
 
+basic ui 45min
 
+bug fixing 1h
+
+audio manager 30m
+
+paylines canvas 45 m // realized later that is payout info :( 
+payout canvas 45 m
+
+
+ 
 Improvements
 
 Event handler class. So classes don't need to know about each other. Just trigger events/listen to events on a list of events there.
@@ -29,3 +42,4 @@ UI controller is "dirty" and implemented fast just to make it work. Use of event
 
 UI -> separate static and not static images/texts. Improve performance as not need to make all dirty and render again.
 
+Better audio system. Is simple and just made for the purpose of the test. Doesn't have system to stop audio, have loops, audio mixers. Definately to improve in a better proyect.
