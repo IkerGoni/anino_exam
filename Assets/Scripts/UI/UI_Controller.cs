@@ -70,11 +70,6 @@ public class UI_Controller : Singleton<UI_Controller>
         _blackPanel.DOFade(0, 0.5f).OnComplete(() => { _blackPanel.gameObject.SetActive(false); });
     }
     
-    public void UpdateUIPreSpin()
-    {
-       // _prizeText.text = 0.ToString();
-    }
-    
     public void UpdateUIStartpin()
     {
         _userTotalChipsText.text = DataManager.Instance.User.Chips.ToString();
@@ -131,14 +126,12 @@ public class UI_Controller : Singleton<UI_Controller>
     
     private void PaylineInfoButtonClicked()
     {
-        //_paylineCanvas.transform.localScale = Vector3.one;
         _paylineCanvas.gameObject.SetActive(true);
         AudioManager.Instance.PlayAudio(Audio.Click);
     }    
     
     private void PayoutInfoButtonClicked()
     {
-        //_paylineCanvas.transform.localScale = Vector3.one;
         _payoutCanvas.gameObject.SetActive(true);
         AudioManager.Instance.PlayAudio(Audio.Click);
     }

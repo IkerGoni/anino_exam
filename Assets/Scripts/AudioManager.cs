@@ -4,6 +4,8 @@ using System.Diagnostics;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
     
+
+//Using enums to make it faster to select the correct audio while calling PlayAudio from scripts
 public enum Audio
 {
     IncreaseBet,
@@ -18,8 +20,6 @@ public enum Audio
 
 public class AudioManager : Singleton<AudioManager>
 {
-
-    
     List<AudioSource> _audioSources = new List<AudioSource>();
 
     [SerializeField]
@@ -44,6 +44,10 @@ public class AudioManager : Singleton<AudioManager>
       _audioSources.Add(gameObject.AddComponent<AudioSource>());   
     }
 
+    /// <summary>
+    /// Plays the selected audio
+    /// </summary>
+    /// <param name="audioclip"> Enum of audioclip</param>
     public void PlayAudio(Audio audioclip)
     {
         AudioSource selectedAudioSource = GetAudioSource();
@@ -52,6 +56,10 @@ public class AudioManager : Singleton<AudioManager>
         selectedAudioSource.Play();
     }
 
+    /// <summary>
+    /// Select and return and idle AudioSource, if non, creates one.
+    /// </summary>
+    /// <returns>AudioSource</returns>
     private AudioSource GetAudioSource()
     {
         for (int i = 0; i < _audioSources.Count; i++)
@@ -68,7 +76,11 @@ public class AudioManager : Singleton<AudioManager>
         return newAudioSource;
     }
 
-    
+    /// <summary>
+    /// Selects the audioclip based on the Audio enum
+    /// </summary>
+    /// <param name="audioclip"></param>
+    /// <returns>AudioClip</returns>
     private AudioClip GetAudioClip(Audio audioclip)
     {
         switch (audioclip)
@@ -97,7 +109,6 @@ public class AudioManager : Singleton<AudioManager>
             case Audio.Chips:
                 return _ChipsAudio;
 
-                
             default:
                 Debug.LogWarning("Audio not found");
                 return null;

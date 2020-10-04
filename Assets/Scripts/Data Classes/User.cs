@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class User
 {
-    
     private int _chips = 500;
     public int Chips => _chips;
 

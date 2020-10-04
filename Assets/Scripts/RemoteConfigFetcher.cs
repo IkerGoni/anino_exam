@@ -6,7 +6,7 @@ using AninoExam;
 using UnityEngine;
 using Firebase;
 
-
+#region WrapperClasses
 /// <summary>
 /// Wrapper classes to bypass unity json serializer limitations
 /// </summary>
@@ -40,19 +40,11 @@ public class ReelWrapper
     public List<int> SymbolDataIDs;
 }
 
+#endregion
+
 
 public class FirebaseRemoteConfig
 {
-/*
- *Reel data ->list of symbol ids per reel
- * Symbol payout data
- * Line Data > payline info
- * max paylines value
- * 
- */
-
-   
-    
     private static FirebaseRemoteConfig _Instance = new FirebaseRemoteConfig();
 
     public static FirebaseRemoteConfig Instance()
@@ -85,6 +77,8 @@ public class RemoteConfigFetcher : MonoBehaviour
 
     #endregion
 
+    
+    [Header("SET TP TRUE TO FORCE LOCAL DATA")]
     public bool ForceLocalData = false;
     
     #region FirebaseKeys
@@ -127,6 +121,11 @@ public class RemoteConfigFetcher : MonoBehaviour
         },TaskScheduler.FromCurrentSynchronizationContext());
     }
 
+    
+    /// <summary>
+    /// Handler pases the data to Datamanager, and sets data loaded to true when finished
+    /// </summary>
+    /// <param name="success"></param>
     public void Handler(bool success)
     {
         if (ForceLocalData)
@@ -143,7 +142,6 @@ public class RemoteConfigFetcher : MonoBehaviour
         
         if (success)
         {
-            DataManager.Instance.DataLoaded = false;
             string data = Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue(_keyPaylines).StringValue;
             DataManager.Instance.ParsePaylinesFromJSON(data);
             DataManager.Instance.ParseAllSymbolDataFromJSON(Firebase.RemoteConfig.FirebaseRemoteConfig.GetValue(_keySymbols).StringValue);
@@ -159,24 +157,5 @@ public class RemoteConfigFetcher : MonoBehaviour
         }
 
         DataManager.Instance.DataLoaded = true;
-    }
-
-    /*
-     Key AllSymbols
-     Symbols Data
-     {"Symbols":[{"Id":0,"Name":"A","Image":"symbols_0","Payout":[0,0,1,5,10]},{"Id":1,"Name":"B","Image":"symbols_1","Payout":[0,0,2,8,25]},{"Id":2,"Name":"C","Image":"symbols_2","Payout":[0,0,1,5,10]},{"Id":3,"Name":"D","Image":"symbols_3","Payout":[0,0,1,5,10]},{"Id":4,"Name":"E","Image":"symbols_4","Payout":[0,0,1,5,10]},{"Id":5,"Name":"F","Image":"symbols_5","Payout":[0,0,1,5,10]},{"Id":6,"Name":"G","Image":"symbols_6","Payout":[0,0,1,5,10]},{"Id":7,"Name":"H","Image":"symbols_7","Payout":[0,0,1,5,10]},{"Id":8,"Name":"I","Image":"symbols_8","Payout":[0,0,1,5,10]},{"Id":9,"Name":"J","Image":"symbols_9","Payout":[0,0,1,5,10]},{"Id":10,"Name":"K","Image":"symbols_10","Payout":[0,0,1,5,10]},{"Id":11,"Name":"L","Image":"symbols_11","Payout":[0,0,1,5,10]},{"Id":12,"Name":"M","Image":"symbols_12","Payout":[0,0,1,5,10]},{"Id":13,"Name":"N","Image":"symbols_13","Payout":[0,0,1,5,10]},{"Id":14,"Name":"O","Image":"symbols_14","Payout":[0,0,1,5,10]},{"Id":15,"Name":"P","Image":"symbols_15","Payout":[0,0,1,5,10]}]}
-UnityEngine.Debug:Log(Object)
-TesterClass:DoTask() (at Assets/TesterClass.cs:49)
-
-    AllSymbolsWrapper -> List of symbolData
-     
-     *
-     *
-     *
-     *
-     *Key: AllPaylines
-     paylines Data
-     {"Paylines":[{"Payline":[1,1,1,1,1]},{"Payline":[0,0,0,0,0]},{"Payline":[2,2,2,2,2]},{"Payline":[0,1,2,1,0]},{"Payline":[2,1,0,1,2]},{"Payline":[0,0,1,2,2]},{"Payline":[2,2,1,0,0]},{"Payline":[1,0,1,2,1]},{"Payline":[1,2,1,0,1]},{"Payline":[1,0,0,1,0]},{"Payline":[1,2,2,1,2]},{"Payline":[0,1,0,0,1]},{"Payline":[2,1,2,2,1]},{"Payline":[0,2,0,2,0]},{"Payline":[2,0,2,0,2]},{"Payline":[1,0,2,0,1]},{"Payline":[1,2,0,2,1]},{"Payline":[0,1,1,1,0]},{"Payline":[2,1,1,1,2]},{"Payline":[0,2,2,2,0]}]}
-     is a AllPaylinesWrapper -> PaylinesWrapper[] Paylines -> int[] Payline;
-     */
+    }   
 }

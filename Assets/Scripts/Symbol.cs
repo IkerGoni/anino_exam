@@ -16,12 +16,6 @@ public class Symbol : MonoBehaviour
     
     [SerializeField] private SpriteRenderer _symbolImage;
 
-   /* public void Setup(SymbolData symbolConfig)
-    {
-        _symbolConfig = symbolConfig;
-        _symbolImage.sprite = _symbolConfig.Image;
-    }
-    */
     public void Setup(SymbolData symbolData)
     {
         _symbolData = symbolData;

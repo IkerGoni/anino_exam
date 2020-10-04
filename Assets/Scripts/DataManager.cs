@@ -7,68 +7,46 @@ using UnityEngine;
 
 
 /// <summary>
-/// DataManager in a real Slot project would be the class responsible of communication between the client and the Backend server
-/// Would take care, f.e. of:
-/// - Get/Updare user data
-/// - Check if spin is doable(enoughChips) and get the spin result
-/// - ...
-///
-/// For this test, I am going to have the data on client
+/// DataManager takes care of all related to data.
+/// Has lookup dictionaries. This could be in other class, for simplicity, Data manager might be handling more than
+/// necessary, as the User.
 /// </summary>
-
-
-
 public class DataManager : Singleton<DataManager>
 {
 
-    public User User;
+    private User _user;
+    public User User => _user;
+
+    
+    //All possible symbol data
     [SerializeField] private SymbolData[] _allSymbols;
-
-    
-            
-    private Dictionary<string, SymbolData> nameToSymbolData = new Dictionary<string, SymbolData>();
-
-    public Dictionary<string, SymbolData> NameToSymbolData => nameToSymbolData;
-
-    private Dictionary<int, SymbolData> idToSymbolData = new Dictionary<int, SymbolData>();
-    
-    private Dictionary<string, Sprite> nameToSpriteData = new Dictionary<string, Sprite>();
-    public Dictionary<string, Sprite> NameToSpriteData => nameToSpriteData;
-
-
-    public Dictionary<int, SymbolData> IdToSymbolData => idToSymbolData;
-
     public SymbolData[] AllSymbols
     {
         get => _allSymbols;
         set => _allSymbols = value;
     }
+    
+    //Lookup dictionaries
+    private Dictionary<string, SymbolData> nameToSymbolData = new Dictionary<string, SymbolData>();
+    public Dictionary<string, SymbolData> NameToSymbolData => nameToSymbolData;
+    
+    private Dictionary<int, SymbolData> idToSymbolData = new Dictionary<int, SymbolData>();
+    public Dictionary<int, SymbolData> IdToSymbolData => idToSymbolData;
 
+    private Dictionary<string, Sprite> nameToSpriteData = new Dictionary<string, Sprite>();
+    public Dictionary<string, Sprite> NameToSpriteData => nameToSpriteData;
+
+
+    //Current slot config Data
     [SerializeField] private int[][] _paylines;
-    [SerializeField] private int _maxPaylines;  
     [SerializeField] private int[][] _reelsSymbolIDs;
     
+    [SerializeField] private int _maxPaylines;  
     public int MaxPaylines
     {
         get { return _maxPaylines; }
         set { _maxPaylines = value; }
     }
-
-    // public static DataManager Instance;
-
-    // string[][] spinResult = {new string[] {"A", "A", "A", "B", "C"},new string[] {"B", "A", "C", "F", "G"}, new string[]{"A", "G", "B", "D", "E"}};
-    //string[][] spinResult = {new string[] {"C", "H", "A", "B", "C"},new string[] {"B", "C", "C", "C", "G"}, new string[]{"A", "G", "B", "D", "C"}};
-
-    
-    
-    /// <summary>
-    /// User should be created from data loaded from the backend. TO simplify, datamanager will create a user on evey start;
-    /// </summary>
-    void Start()
-    {
-        User = new User();
-    }
-
     private bool _dataLoaded = false;
 
     public bool DataLoaded
@@ -76,7 +54,9 @@ public class DataManager : Singleton<DataManager>
         get { return _dataLoaded; }
         set
         {
-            if (value && !_dataLoaded) //first launch
+            //first launch. Personally not a big fan of having logic on assignations.
+            //Usually i would only have validation logic here.
+            if (value && !_dataLoaded) 
             {
                 BuildLookupDictionaries();
                 InjectSlotData();
@@ -88,7 +68,19 @@ public class DataManager : Singleton<DataManager>
             _dataLoaded = value;
         }
     }
+    
+        
+    /// <summary>
+    /// User should be created from data loaded from the backend. TO simplify, datamanager will create a user on evey start;
+    /// </summary>
+    void Start()
+    {
+        _user = new User();
+    }
 
+    /// <summary>
+    /// Creates the loookup Dictionaries
+    /// </summary>
     private void BuildLookupDictionaries()
     {
         Sprite[] allSprites = Resources.LoadAll<Sprite>("Sprites/symbols");
@@ -106,6 +98,9 @@ public class DataManager : Singleton<DataManager>
         }
     }
     
+    /// <summary>
+    /// Creates and injects the slot setup data into the game slot controller.
+    /// </summary>
     private void InjectSlotData()
     {
         SlotSetupData slotSetupData = new SlotSetupData();
@@ -117,11 +112,7 @@ public class DataManager : Singleton<DataManager>
 
     }
 
-    public string[][] GetSpinResult()
-    {
-        return GenerateResult();
-    }
-
+       #region Parse remote config data
     /// <summary>
     /// gets a string json of AllPaylinesWrapper -> PaylinesWrapper[] Paylines -> int[] Payline and saves it into paylines variable
     /// </summary>
@@ -163,16 +154,23 @@ public class DataManager : Singleton<DataManager>
         }     
     }
     
-    public int[][] GetSlotPaylines()
+    #endregion
+    
+    /// <summary>
+    /// Gets spin results. in real life slot game, this would be a call to backend with a callback
+    /// </summary>
+    /// <returns></returns>
+    public string[][] GetSpinResult()
     {
-        return _paylines;
+        return GenerateResult();
     }
 
-
-    #region BackendLogic
+    #region Logic that should be on backend
 
     /// <summary>
-    /// Creates a random result
+    /// Creates a random result. This function, has to be on backend.
+    /// In the test is completely random, but it has to be based on weighted probabilities,
+    /// The slot should have a return around 95%.
     /// </summary>
     /// <returns></returns>
     string[][] GenerateResult()

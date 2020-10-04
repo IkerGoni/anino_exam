@@ -10,7 +10,7 @@ public class ReelController : MonoBehaviour
     public event ReelStopped OnReelStopped;
 
     [SerializeField] private SymbolData[] _reelSymbols;
-    [SerializeField] public SymbolData[] ReelSymbols
+    public SymbolData[] ReelSymbols
     {
         get => _reelSymbols;
         set => _reelSymbols = value;
@@ -18,9 +18,9 @@ public class ReelController : MonoBehaviour
 
     [SerializeField] private Symbol[] _displaySymbols;
     
-    private float[] positions = new float[]{2f,0f,-2f,-4f,-6f}; //it is on reel, en case we have different size reels, for this example could be on SlotController but this adds more flexibility (plus its on reels obcjet domain)
-
-    [SerializeField] private float _speed = 20f;
+    private readonly float[] positions = new float[]{2f,0f,-2f,-4f,-6f}; //this date could be on reelData we get from remote config
+    
+    [SerializeField] private float _speed = 25f;
 
 
     private SymbolData[] currentResult;

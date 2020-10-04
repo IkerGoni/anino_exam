@@ -12,12 +12,12 @@ namespace AninoExam
         None,
         Loading,
         Setup,
-        Start,
         Ready,
         GettingResult,
         StartSpin,
         Spinning,
         StoppingSpin,
+        WaitingForSpinsToStop,
         SpinFinished,
         SpinFeedback,
     }
@@ -61,7 +61,7 @@ namespace AninoExam
         private int _spinningSlots;
         //RESULTS
 
-        private SymbolData[][] currentReelResult = null;
+        private SymbolData[][] _currentReelResult = null;
         private int[][] _paylines;
 
 
@@ -117,19 +117,16 @@ namespace AninoExam
         {
             if (currentGameState == GameState.Loading)
             {
-                //wait for preparing data
                 return;
             }
-            else if (currentGameState == GameState.GettingResult)
+            
+            if (currentGameState == GameState.GettingResult)
             {
-                UI_Controller.Instance.UpdateUIPreSpin();
 
                 GetSpinResult();
             
                 ChangeGameState(GameState.Ready);
             }
-           
-            
             else if (currentGameState == GameState.StartSpin)
             {
                 
@@ -152,7 +149,9 @@ namespace AninoExam
                 {
                     _reels[i].DisplayResults();
                 }
-            }
+                ChangeGameState(GameState.WaitingForSpinsToStop);
+
+            }                    
             else if (currentGameState == GameState.SpinFinished)
             {   
                 if(_currentPrize>0)
@@ -167,29 +166,21 @@ namespace AninoExam
         {
             if (currentGameState == GameState.Ready)
             {
-
                 if (DataManager.Instance.User.Chips >= _selectedBet * _selectedPaylines)
                 {
                     DataManager.Instance.User.SubstractChips( _selectedBet * _selectedPaylines);
                     ChangeGameState(GameState.StartSpin);
                 }
-
                 else
                 {
                     AudioManager.Instance.PlayAudio(Audio.Error);
-                    Debug.Log("Not enough chips"); //Chance to launch IAP shop
-
+                   //Chance to launch IAP shop
                 }
-
-                
-                //TODO spinStartEvent
             }
             else if (currentGameState == GameState.Spinning)
             {
                  ChangeGameState(GameState.StoppingSpin);
             } 
-
-           
         }
         
         /// <summary>
@@ -199,7 +190,7 @@ namespace AninoExam
         private void GetSpinResult()
         {
             ApplySpinResults(DataManager.Instance.GetSpinResult());
-            EvaluatePaylines();
+            _currentPrize = GetSelectedPaylinesPrize();
         }
 
         /// <summary>
@@ -218,84 +209,79 @@ namespace AninoExam
                 for (int j = _reels[i].ReelSize - 1; j >= 0; j--)
                 {
                     reelResult[j] = DataManager.Instance.NameToSymbolData[spinResult[j][i]];
-                    currentReelResult[i][j] = reelResult[j];
+                    _currentReelResult[i][j] = reelResult[j];
                 }
 
                 _reels[i].SetResult(reelResult);
             }
         }
 
+
+        
         void ResetCurrentResult()
         {
-            currentReelResult = new SymbolData[_reels.Length][];
-            for (int i = 0; i < currentReelResult.Length; i++)
+            _currentReelResult = new SymbolData[_reels.Length][];
+            for (int i = 0; i < _currentReelResult.Length; i++)
             {
-                currentReelResult[i] = new SymbolData[_reels[i].ReelSize];
+                _currentReelResult[i] = new SymbolData[_reels[i].ReelSize];
             }
         }
-
-        private void EvaluatePaylines()
+        
+        /// <summary>
+        /// Evaluates paylines based on selected paylines
+        /// </summary>
+        /// <returns>Returns the global payout prize</returns>
+        private int GetSelectedPaylinesPrize()
         {
-            _currentPrize = 0;
+            int currentPrize = 0;
             for (int i = 0; i < _selectedPaylines; i++)
             {
                 int currentPayLinePrice = GetPaylinePrize(_paylines[i]);
                 if (currentPayLinePrice > 0)
-                {
-                /*    Debug.Log("payline "+_paylines[i][0].ToString()+", "
-                              +_paylines[i][1].ToString()+", "
-                              +_paylines[i][2].ToString()+", "
-                              +_paylines[i][3].ToString()+", "
-                              +_paylines[i][4].ToString()+", with price: " + currentPayLinePrice);*/
-                    _currentPrize += currentPayLinePrice*_selectedBet;
+                {      
+                    currentPrize += currentPayLinePrice*_selectedBet;
                 }
             }
+
+            return currentPrize;
         }
 
-        //first try was with SymbolSO as key, but the are not equal (obviusly), storing the id 
+        
+        /// <summary>
+        /// Calculates and returns paylines total payout
+        /// </summary>
+        /// <param name="payline"></param>
+        /// <returns>payline total payout</returns>
         private int GetPaylinePrize(int[] payline)
         {
+            
+            //Creates a dict of symbol appareances on payline
+            
             Dictionary<int, int> symbolAppareances = new Dictionary<int, int>();
-            int totalPaylinePrize = 0;
+            
             for (int i = 0; i < payline.Length; i++)
             {
-                if (symbolAppareances.ContainsKey(currentReelResult[i][payline[i]].Id))
+                if (symbolAppareances.ContainsKey(_currentReelResult[i][payline[i]].Id))
                 {
-                    symbolAppareances[currentReelResult[i][payline[i]].Id]++;
+                    symbolAppareances[_currentReelResult[i][payline[i]].Id]++;
                 }
                 else
                 {
-                    symbolAppareances.Add(currentReelResult[i][payline[i]].Id, 0);
+                    symbolAppareances.Add(_currentReelResult[i][payline[i]].Id, 0);
                 }
             }
 
-            int paylinePrize = GetSymbolOcurrencePrizes(symbolAppareances);
-
-            if (paylinePrize > 0)
-            {
-                string paylineS = String.Empty;
-
-                for (int i = 0; i < payline.Length; i++)
-                {
-                    paylineS += payline[i] + ", ";
-                }
-            }
-
-            return paylinePrize;
-        }
-
-        private int GetSymbolOcurrencePrizes(Dictionary<int, int> symbolAppareances)
-        {
-            int linePrize = 0;
-
+            int paylinePrize = 0;
+            
+            // Calculates the total payout based on symbols apparances
+            
             foreach (KeyValuePair<int, int> entry in symbolAppareances)
             {
-                linePrize += DataManager.Instance.IdToSymbolData[entry.Key].Payout[entry.Value];
+                paylinePrize += DataManager.Instance.IdToSymbolData[entry.Key].Payout[entry.Value];
             }
-
-            return linePrize;
+            
+            return paylinePrize;
         }
-
 
 
         #region chips and bet value
