@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using AninoExam;
 using UnityEngine;
 
@@ -27,14 +25,14 @@ public class DataManager : Singleton<DataManager>
     }
     
     //Lookup dictionaries
-    private Dictionary<string, SymbolData> nameToSymbolData = new Dictionary<string, SymbolData>();
-    public Dictionary<string, SymbolData> NameToSymbolData => nameToSymbolData;
+    private Dictionary<string, SymbolData> _nameToSymbolData = new Dictionary<string, SymbolData>();
+    public Dictionary<string, SymbolData> NameToSymbolData => _nameToSymbolData;
     
-    private Dictionary<int, SymbolData> idToSymbolData = new Dictionary<int, SymbolData>();
-    public Dictionary<int, SymbolData> IdToSymbolData => idToSymbolData;
+    private Dictionary<int, SymbolData> _idToSymbolData = new Dictionary<int, SymbolData>();
+    public Dictionary<int, SymbolData> IdToSymbolData => _idToSymbolData;
 
-    private Dictionary<string, Sprite> nameToSpriteData = new Dictionary<string, Sprite>();
-    public Dictionary<string, Sprite> NameToSpriteData => nameToSpriteData;
+    private Dictionary<string, Sprite> _nameToSpriteData = new Dictionary<string, Sprite>();
+    public Dictionary<string, Sprite> NameToSpriteData => _nameToSpriteData;
 
 
     //Current slot config Data
@@ -87,14 +85,14 @@ public class DataManager : Singleton<DataManager>
 
         for (int i = 0; i < _allSymbols.Length; i++)
         {
-            nameToSymbolData.Add(_allSymbols[i].Name, _allSymbols[i]);
-            idToSymbolData.Add(_allSymbols[i].Id, _allSymbols[i]);
+            _nameToSymbolData.Add(_allSymbols[i].Name, _allSymbols[i]);
+            _idToSymbolData.Add(_allSymbols[i].Id, _allSymbols[i]);
         }
         
 
         for (int i = 0; i < allSprites.Length; i++)
         {
-            nameToSpriteData.Add(allSprites[i].name, allSprites[i]);
+            _nameToSpriteData.Add(allSprites[i].name, allSprites[i]);
         }
     }
     

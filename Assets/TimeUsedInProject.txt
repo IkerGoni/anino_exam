@@ -1,45 +1,35 @@
-Initial setup 40 mins
-Reels spinning 30 mins
+Initial setup                                                                           40m
+Reels spinning                                                                          30m
 Send result to reels 30 mins
 
-trying to make the reels show result stopping on site 1h
+trying to make the reels show result stopping on site                                   1h
 30 mins reels stop on result positon animated
-paylines creation 20 mins
+paylines creation                                                                       20m
 
 2h
 
-process paylines, create logic 30 mins
+process paylines, create logic                                                          30m
 
-generate random results on local, fix small bugs, review result logic 1h
+generate random results on local, fix small bugs, review result logic                   1h
 
-start settting UI and UI manager 45m
+start settting UI and UI manager                                                        45m
 
-setting firebase 30 mins
+setting firebase                                                                        30m
 
-2h45
+
 heady code refactor, from Scriptable onjects to data classes to work with firebase
-change loading system, online fetcher, create json files, parse them... 3h
+change loading system, online fetcher, create json files, parse them...                 3h
 
-basic ui 45min
+basic ui                                                                                45m
 
-bug fixing 1h
+bug fixing                                                                              1h
 
-audio manager 30m
+audio manager                                                                           30m
 
-paylines canvas 45 m // realized later that is payout info :( 
-payout canvas 45 m
-
-
+paylines canvas // realized later that is payout info :(                                45m
+payout canvas                                                                           45m
+Refactor/cleaning                                                                       45m
  
-Improvements
+Documentation and setup for sending the test                                            30m
 
-Event handler class. So classes don't need to know about each other. Just trigger events/listen to events on a list of events there.
-Helps decoupling classes and cuts dependencies. Didn't do bc of time constrains.
-
-Finish the code to accept different size reels. Code is directed and prepared for that on a degree
-
-UI controller is "dirty" and implemented fast just to make it work. Use of events would be better to update it than the current system.
-
-UI -> separate static and not static images/texts. Improve performance as not need to make all dirty and render again.
-
-Better audio system. Is simple and just made for the purpose of the test. Doesn't have system to stop audio, have loops, audio mixers. Definately to improve in a better proyect.
+    TOTAL:                                                                              12h 15m
