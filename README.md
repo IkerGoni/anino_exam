@@ -87,4 +87,47 @@ Better win feedback and flow. Define big, great, ultra wins with animations.
 
 Particles and visuals.
 
+TIME USED
+
+
+I am aware that i had the luck of doing the work on several days. This allows for couple of things that are not possible on a 24h timeframe.
+Less preassure. Even that I tried to do it as fast as possible, not going always for the best solution but for the one I considered worth time/quality wise.
+Allows for reflection, thinking outside the time strictly using for programming. Sometimes I found myself thinkink about the problem even not in front of the pc. This time is hard to quantify, but still important and IMO has a lot of value. Sorry if the estimations are not super detailed. I tried to do it has sincere and clearly as possible, but some might be hard to meassure. I could easily add 1.5h of just thinking aboout the project outside of workstation.
+
+
+Initial setup                                                                           40m
+Reels spinning                                                                          30m
+Send result to reels 30 mins
+
+trying to make the reels show result stopping on site                                   1h
+30 mins reels stop on result positon animated
+paylines creation                                                                       20m
+
+2h
+
+process paylines, create logic                                                          30m
+
+generate random results on local, fix small bugs, review result logic                   1h
+
+start settting UI and UI manager                                                        45m
+
+setting firebase                                                                        30m
+
+
+heady code refactor, from Scriptable onjects to data classes to work with firebase
+change loading system, online fetcher, create json files, parse them...                 3h
+
+basic ui                                                                                45m
+
+bug fixing                                                                              1h
+
+audio manager                                                                           30m
+
+paylines canvas // realized later that is payout info :(                                45m
+payout canvas                                                                           45m
+Refactor/cleaning                                                                       45m
+ 
+Documentation and setup for sending the test                                            30m
+
+    TOTAL:                                                                              12h 15m
 
