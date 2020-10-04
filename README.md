@@ -61,6 +61,8 @@ Overall I think that the structure is ok. Is hard for me sometimes to keep a cle
 
 IMPROVEMENTS
 
+Take care of different screen ratios.
+
 Remove game state logic from SlotController to a GameManager.
 
 Event handler class. So classes don't need to know about each other. Just trigger events/listen to events on a list of events there. Helps decoupling classes and cuts dependencies. Didn't do due to time constrains.
